@@ -1,3 +1,3 @@
 @echo off
 
-start devenv C:\mylane\misc\mylane.sln
+start devenv C:\my-lane\misc\mylane.sln

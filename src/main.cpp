@@ -1,40 +1,46 @@
-
-// Segment -> Hough -> Output Frame
-
-#include <stdio.h>
 #include <opencv2/opencv.hpp>
 
-cv::Mat ApplyCanny(cv::Mat Image)
+cv::Mat ApplyCanny(cv::Mat Frame)
 {
-    cv::Mat GrayImage;
-    cv::cvtColor(Image, GrayImage, cv::COLOR_RGB2GRAY);
+    cv::Mat GrayFrame;
+    cv::cvtColor(Frame, GrayFrame, cv::COLOR_BGR2GRAY);
 
-    cv::Mat BlurredImage;
-    cv::GaussianBlur(GrayImage, BlurredImage, cv::Size(5, 5), 0);
+    cv::Mat BlurredFrame;
+    cv::GaussianBlur(GrayFrame, BlurredFrame, cv::Size(5, 5), 0);
 
     cv::Mat Canny;
-    cv::Canny(BlurredImage, Canny, 50, 150);
+    cv::Canny(BlurredFrame, Canny, 50, 150);
 
     return(Canny);
 }
 
-cv::Mat ApplySegment(cv::Mat Image)
-{
-    return(NULL);
-}
-
 int main(int ArgCount, char** Args)
 {
-    cv::namedWindow("mylane", cv::WINDOW_NORMAL);
+    cv::VideoCapture Capture("video1.mp4");
 
-    cv::Mat Image = cv::imread("image.png", cv::IMREAD_COLOR);
+    if(!Capture.isOpened())
+    {
+        return(-1);
+    }
 
-    cv::Mat Canny = ApplyCanny(Image);
+    cv::Mat Frame;
+    for(;;)
+    {
+        if(!Capture.read(Frame))
+        {
+            break;
+        }
 
-    cv::imshow("mylane", Canny);
+        cv::Mat Canny = ApplyCanny(Frame);
+        cv::imshow("my-lane", Canny);
 
-    cv::waitKey(0);
+        if (cv::waitKey(30) >= 0)
+        {
+            break;
+        }
+    }
+
+    Capture.release();
     cv::destroyAllWindows();
-
     return(0);
 }
