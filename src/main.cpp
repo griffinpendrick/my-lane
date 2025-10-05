@@ -18,26 +18,24 @@ int main(int ArgCount, char** Args)
 {
     cv::VideoCapture Capture("video1.mp4");
 
-    if(!Capture.isOpened())
+    if(Capture.isOpened())
     {
-        return(-1);
-    }
+		cv::Mat Frame;
+		for(;;)
+		{
+			if(!Capture.read(Frame))
+			{
+				break;
+			}
 
-    cv::Mat Frame;
-    for(;;)
-    {
-        if(!Capture.read(Frame))
-        {
-            break;
-        }
+			cv::Mat Canny = ApplyCanny(Frame);
+			cv::imshow("my-lane", Canny);
 
-        cv::Mat Canny = ApplyCanny(Frame);
-        cv::imshow("my-lane", Canny);
-
-        if (cv::waitKey(30) >= 0)
-        {
-            break;
-        }
+			if (cv::waitKey(30) >= 0)
+			{
+				break;
+			}
+		}
     }
 
     Capture.release();
