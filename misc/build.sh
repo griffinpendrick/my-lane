@@ -1,8 +1,8 @@
 set -e
 
 OPENCV_PATH="/opt/homebrew/opt/opencv"
-BIN_DIR="$(pwd)/bin"
-SRC_DIR="$(pwd)/src"
+BIN_DIR="Users/griffinpendrick/my-lane/bin"
+SRC_DIR="Users/griffinpendrick/my-lane/src"
 
 mkdir -p "$BIN_DIR"
 pushd "$BIN_DIR" > /dev/null
