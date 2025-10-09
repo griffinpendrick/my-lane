@@ -90,20 +90,20 @@ inline cv::Mat DrawLane(cv::Mat Frame, std::vector<cv::Vec4i> Lines)
 		cv::Vec2i LeftX;
 		cv::Vec2i RightX;
 
-		if(!LeftPoints.empty())
+		if(!LeftPoints.empty() || !RightPoints.empty())
 		{
 			cv::fitLine(LeftPoints, LeftLine, cv::DIST_L2, 0, 0.01, 0.01);
-			
+			cv::fitLine(RightPoints, RightLine, cv::DIST_L2, 0, 0.01, 0.01);
+
 			LeftX[0] = (int)(LeftLine[2] + (Frame.rows - LeftLine[3]) * (LeftLine[0] / LeftLine[1]));
 			LeftX[1] = (int)(LeftLine[2] + (Frame.rows * 0.60f - LeftLine[3]) * (LeftLine[0] / LeftLine[1]));
-		}
-
-		if(!RightPoints.empty())
-		{
-			cv::fitLine(RightPoints, RightLine, cv::DIST_L2, 0, 0.01, 0.01);
 
 			RightX[0] = (int)(RightLine[2] + (Frame.rows - RightLine[3]) * (RightLine[0] / RightLine[1]));
 			RightX[1] = (int)(RightLine[2] + (Frame.rows * 0.60f - RightLine[3]) * (RightLine[0] / RightLine[1]));
+		}
+		else
+		{
+			return(Frame);
 		}
 
 		std::vector<cv::Point> Points = {
@@ -121,6 +121,19 @@ inline cv::Mat DrawLane(cv::Mat Frame, std::vector<cv::Vec4i> Lines)
 		cv::addWeighted(Frame, 1.0, Mask, 0.5, 0.0, Result);
 		cv::line(Result, Points[0], Points[1], cv::Scalar(0, 255, 0), 2);
 		cv::line(Result, Points[2], Points[3], cv::Scalar(0, 255, 0), 2);
+
+
+		float LeftLaneSlope  = (Frame.rows * 0.60f - Frame.rows) / (LeftX[1] - LeftX[0]);
+		float RightLaneSlope = (Frame.rows * 0.60f - Frame.rows) / (RightX[1] - RightX[0]);
+
+		char T1[32];
+		sprintf_s(T1, "Right lane slope: %f", RightLaneSlope);
+
+		char T2[32];
+		sprintf_s(T2, "Left lane slope: %f", LeftLaneSlope);
+
+		cv::putText(Result, T1, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.60, cv::Scalar(15, 15, 15), 2);
+		cv::putText(Result, T2, cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 0.60, cv::Scalar(15, 15, 15), 2);
 
 		return(Result);
 	}
@@ -149,7 +162,7 @@ int main(int ArgCount, char** Args)
 			OutputFrame = DrawLane(Frame, HoughLineTransform(OutputFrame, Frame));
 			
 			cv::imshow("my-lane", OutputFrame);
-			cv::waitKey(33);
+			cv::waitKey(16);
 		}
     }
 
