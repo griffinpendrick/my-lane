@@ -143,7 +143,7 @@ inline cv::Mat DrawLane(cv::Mat Frame, std::vector<cv::Vec4i> Lines)
 
 int main(int ArgCount, char** Args)
 {
-    cv::VideoCapture Capture("../sample.mp4");
+    cv::VideoCapture Capture("sample.mp4");
 	cv::namedWindow("my-lane", cv::WINDOW_NORMAL);
 
     if(Capture.isOpened())
